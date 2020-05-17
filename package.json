@@ -18,6 +18,7 @@
     "@azure/ms-rest-nodeauth": "^3.0.3",
     "colorts": "^0.1.63",
     "commander": "^5.1.0",
+    "console-hook": "0.0.2",
     "inquirer": "^7.1.0"
   },
   "devDependencies": {

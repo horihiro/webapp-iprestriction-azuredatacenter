@@ -5,8 +5,9 @@ import { getSubscriptionsFromTenants } from "@azure/ms-rest-nodeauth/dist/lib/su
 import inquirer, { Answers } from "inquirer";
 import { getAzureIpRanges, IpRangeByServiceTag } from "../lib/getAzureIpRanges";
 import { program } from "commander";
-import { Site, WebAppsGetConfigurationResponse } from "@azure/arm-appservice/esm/models";
+import {  WebAppsGetConfigurationResponse } from "@azure/arm-appservice/esm/models";
 import color from "colorts";
+import Hook from "console-hook";
 
 program
   .version(require("../../package.json").version)
@@ -41,8 +42,13 @@ if (!program.showAllIpRanges && (!program.sitename || !program.servicetag)) {
       ? (ipRangesByTag: IpRangeByServiceTag) => serviceTagRegExp.test(ipRangesByTag.id)
       : (ipRangesByTag: IpRangeByServiceTag) => ipRangesByTag.id === serviceTag;
 
-      const ALL_SUBSCRIPTIONS='ALL SUBSCRIPTIONS';
-      const returns = await Promise.all([
+    const ALL_SUBSCRIPTIONS = 'ALL SUBSCRIPTIONS';
+    const myHook = Hook(console, true).attach('log', (method:any, args:any) => {
+      args[0] = color(args[0]).yellow + '';
+      console.error(...args);
+    });
+
+    const returns = await Promise.all([
       getAzureIpRanges(),
       program.showAllIpRanges || (async () => {
         const clientId = program.clientId;
@@ -61,9 +67,10 @@ if (!program.showAllIpRanges && (!program.sitename || !program.servicetag)) {
           : await interactiveLogin();
         const token = await credential.getToken();
         const subscriptions: LinkedSubscription[] = await getSubscriptionsFromTenants(credential, [token.tenantId || ""]);
-        const subscriptionId = await (async (linkedSubscriptions:LinkedSubscription[]) => {
+        const prompt = inquirer.createPromptModule({ output: process.stderr });
+        const subscriptionId = await (async (linkedSubscriptions: LinkedSubscription[]) => {
           if (linkedSubscriptions.length === 1) return linkedSubscriptions[0].id;
-          const selectedSubscription: Answers = await inquirer.prompt([{
+          const selectedSubscription: Answers = await prompt([{
             type: 'list',
             name: 'selectedSubscription',
             message: 'Choose a subscription you want to use',
@@ -77,6 +84,7 @@ if (!program.showAllIpRanges && (!program.sitename || !program.servicetag)) {
         }
       })()
     ]);
+    myHook.detach();
     if (program.showAllIpRanges) {
       console.log(JSON.stringify(returns[0], null, 2));
       return;
@@ -91,13 +99,13 @@ if (!program.showAllIpRanges && (!program.sitename || !program.servicetag)) {
   - Site Name:
     ${sitename}
   - Slot Name:
-    ${slotname||'(none)'}
+    ${slotname || '(none)'}
   - SCM site:
     ${program.scm}
 `).yellow + '');
     const config: WebAppsGetConfigurationResponse = await updateIpRestriction(updateOptions);
     console.log(JSON.stringify({
-      ipSecurityRestrictions: config.ipSecurityRestrictions, 
+      ipSecurityRestrictions: config.ipSecurityRestrictions,
       scmIpSecurityRestrictions: config.scmIpSecurityRestrictions,
       scmIpSecurityRestrictionsUseMain: config.scmIpSecurityRestrictionsUseMain
     }, null, 2));
