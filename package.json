@@ -2,9 +2,9 @@
   "name": "webapp-ipsecurityrestriction-updater",
   "version": "1.0.0",
   "description": "",
-  "main": "lib/index.js",
+  "main": "dist/lib/index.js",
   "bin": {
-    "webapp-iprestriction": "bin/main.js"
+    "webapp-iprestriction": "dist/bin/main.js"
   },
   "scripts": {
     "tsc": "tsc",
