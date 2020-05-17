@@ -10,8 +10,8 @@ import color from "colorts";
 
 program
   .version(require("../../package.json").version)
-  .requiredOption('-n, --sitename <sitename>', 'target site name (required)')
-  .requiredOption('-t, --servicetag <servicetag>', 'service tag for filtering (required)')
+  .option('-n, --sitename <sitename>', 'target site name (required)')
+  .option('-t, --servicetag <servicetag>', 'service tag for filtering (required)')
   .option('-r, --regexp', 'handle --servicetag value as regular expression')
   .option('-s, --scm', 'set to SCM site')
   .option('-S, --slotname <slotname>', 'target slot name of the site')
@@ -20,9 +20,17 @@ program
   .option('--clientSecret <clientSecret>', 'secret of service principal')
   .option('--tenantId <tenantId>', 'tenannt Id of service principal')
   .option('')
+  .option('--show-all-ip-ranges', 'show all IP ranges of Azure data center')
+  .option('')
   .option('-d, --debug', 'output debug messages')
   .parse(process.argv);
 
+if (!program.showAllIpRanges && (!program.sitename || !program.servicetag)) {
+  console.error(color(`error: required option '--show-all-ip-ranges' 
+  or
+  '--sitename' and '--servicetag' are not specified`).red + '');
+  process.exit(1);
+}
 (async () => {
   try {
     const sitename = program.sitename;
@@ -36,7 +44,7 @@ program
       const ALL_SUBSCRIPTIONS='ALL SUBSCRIPTIONS';
       const returns = await Promise.all([
       getAzureIpRanges(),
-      (async () => {
+      program.showAllIpRanges || (async () => {
         const clientId = program.clientId;
         const clientSecret = program.clientSecret;
         const tenantId = program.tenantId;
@@ -69,6 +77,10 @@ program
         }
       })()
     ]);
+    if (program.showAllIpRanges) {
+      console.log(JSON.stringify(returns[0], null, 2));
+      return;
+    }
     const updateOptions: UpdateOptions = { ...returns[1], ...{ sitename, slotname } };
     if (!program.scm) updateOptions.ipRanges = returns[0].filter(filterFunc);
     else updateOptions.scmIpRanges = returns[0].filter(filterFunc);
