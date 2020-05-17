@@ -33,7 +33,8 @@ program
       ? (ipRangesByTag: IpRangeByServiceTag) => serviceTagRegExp.test(ipRangesByTag.id)
       : (ipRangesByTag: IpRangeByServiceTag) => ipRangesByTag.id === serviceTag;
 
-    const returns = await Promise.all([
+      const ALL_SUBSCRIPTIONS='ALL SUBSCRIPTIONS';
+      const returns = await Promise.all([
       getAzureIpRanges(),
       (async () => {
         const clientId = program.clientId;
@@ -58,13 +59,13 @@ program
             type: 'list',
             name: 'selectedSubscription',
             message: 'Choose a subscription you want to use',
-            choices: subscriptions.map(subscription => `${subscription.name} (${subscription.id})`)
+            choices: [`(${ALL_SUBSCRIPTIONS})`].concat(subscriptions.map(subscription => `${subscription.name} (${subscription.id})`))
           }]);
           return selectedSubscription.selectedSubscription.replace(/^.*\(([^\)]+)\)$/, '$1');
         })(subscriptions);
         return {
           credential,
-          subscriptionIds: [subscriptionId]
+          subscriptionIds: subscriptionId === ALL_SUBSCRIPTIONS ? subscriptions.map(subscription => subscription.id) : [subscriptionId]
         }
       })()
     ]);
@@ -74,7 +75,7 @@ program
     program.debug && console.warn(color(`
   Applying following settings...
   - Subscription Id:
-    ${updateOptions.subscriptionIds[0]}
+    ${updateOptions.subscriptionIds.length > 1 ? `(${ALL_SUBSCRIPTIONS})` : updateOptions.subscriptionIds[0]}
   - Site Name:
     ${sitename}
   - Slot Name:
@@ -90,6 +91,6 @@ program
     }, null, 2));
     program.debug && console.warn(color('done.').yellow + '');
   } catch (e) {
-    console.error(color(e).red + '');
+    console.error(color(e + '').red + '');
   }
 })();
