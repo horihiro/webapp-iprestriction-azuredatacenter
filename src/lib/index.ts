@@ -1,7 +1,9 @@
 import { TokenCredentialsBase } from "@azure/ms-rest-nodeauth";
-import { IpRangeByServiceTag } from "./getAzureIpRanges";
 import { WebSiteManagementClient } from "@azure/arm-appservice";
+import { IpRangeByServiceTag } from "./getAzureIpRanges";
 import { Site, SiteConfig, IpSecurityRestriction, WebAppsCreateOrUpdateConfigurationResponse, WebAppsGetConfigurationResponse } from "@azure/arm-appservice/esm/models";
+
+export { IpRangeByServiceTag, getAzureIpRanges } from "./getAzureIpRanges";
 
 export type UpdatePriority = {
   start: number;

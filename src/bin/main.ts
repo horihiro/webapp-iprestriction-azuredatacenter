@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 import { TokenCredentialsBase, interactiveLogin, LinkedSubscription, loginWithServicePrincipalSecret, AuthResponse } from "@azure/ms-rest-nodeauth";
-import { updateIpRestriction, UpdateOptions } from "../lib";
+import { updateIpRestriction, UpdateOptions, getAzureIpRanges, IpRangeByServiceTag } from "../lib";
 import { getSubscriptionsFromTenants } from "@azure/ms-rest-nodeauth/dist/lib/subscriptionManagement/subscriptionUtils";
 import inquirer, { Answers } from "inquirer";
-import { getAzureIpRanges, IpRangeByServiceTag } from "../lib/getAzureIpRanges";
 import { program } from "commander";
 import {  WebAppsGetConfigurationResponse } from "@azure/arm-appservice/esm/models";
 import color from "colorts";
