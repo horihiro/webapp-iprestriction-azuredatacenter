@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { TokenCredentialsBase, interactiveLogin, LinkedSubscription, loginWithServicePrincipalSecret, AuthResponse } from "@azure/ms-rest-nodeauth";
+import { TokenCredentialsBase, interactiveLogin, LinkedSubscription, loginWithServicePrincipalSecret } from "@azure/ms-rest-nodeauth";
 import { updateIpRestriction, UpdateOptions, getAzureIpRanges, IpRangeByServiceTag } from "../lib";
 import { getSubscriptionsFromTenants } from "@azure/ms-rest-nodeauth/dist/lib/subscriptionManagement/subscriptionUtils";
 import inquirer, { Answers } from "inquirer";

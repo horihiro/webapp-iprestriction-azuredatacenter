@@ -1,7 +1,7 @@
-import { TokenCredentialsBase } from "@azure/ms-rest-nodeauth";
 import { WebSiteManagementClient } from "@azure/arm-appservice";
 import { IpRangeByServiceTag } from "./getAzureIpRanges";
 import { Site, SiteConfig, IpSecurityRestriction, WebAppsCreateOrUpdateConfigurationResponse, WebAppsGetConfigurationResponse } from "@azure/arm-appservice/esm/models";
+import { TokenClientCredentials } from "@azure/ms-rest-nodeauth/dist/lib/credentials/tokenClientCredentials";
 
 export { IpRangeByServiceTag, getAzureIpRanges } from "./getAzureIpRanges";
 
@@ -14,7 +14,7 @@ export type UpdateOptions = {
   slotname?: string;
   ipRanges?: IpRangeByServiceTag[];
   scmIpRanges?: IpRangeByServiceTag[];
-  credential: TokenCredentialsBase;
+  credential: TokenClientCredentials;
   subscriptionIds: string[];
   priority?: UpdatePriority;
 }
