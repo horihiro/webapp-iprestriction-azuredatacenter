@@ -1,5 +1,5 @@
 {
-  "name": "webapp-ipsecurityrestriction-updater",
+  "name": "webapp-iprestriction-azuredatacenter",
   "version": "1.0.0",
   "description": "",
   "main": "dist/lib/index.js",
