@@ -15,7 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "@azure/arm-appservice": "^6.0.0",
-    "@azure/ms-rest-nodeauth": "^3.0.3",
+    "@azure/ms-rest-nodeauth": "^3.0.8",
     "colorts": "^0.1.63",
     "commander": "^5.1.0",
     "console-hook": "0.0.2",
